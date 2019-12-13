@@ -1,0 +1,73 @@
+%% Discreate Fouries Tranceformation
+clc
+
+%% Coefficient Calculation
+
+M;
+R1=M(1,2:end-1);
+I1=M(2,2:end-1);
+
+alp=R1+1i*I1;
+t1=linspace(0,1,length(R1));
+F1=@(T1,W,A) A.*exp(-W.*2.*pi.*1i.*T1);
+w=-(length(R1)-1)/2:(length(R1)-1)/2;
+for j=1:length(w)
+   c(j)=sum(F1(t1,w(j),alp)); 
+end
+
+%% Initial Conditions
+% w=1:20; %Speed
+% d=[2 2 3 3 3];    %Distance
+% a=[0 pi/2 0 -pi/2 0];  %angle of starting
+ time=400;
+%% Fourier Series Calculation
+%c=d.*exp(complex(0,a)); 
+t=linspace(0,1,time);
+F(:,1)=zeros(length(t),1);
+sum_c=sum(abs(c));
+for k=1:length(c)
+   z(:,k)=c(k)*exp(complex(0,2*pi*w(k)*t));
+   F(:,k+1)=z(:,k)+F(:,k); 
+end
+
+ 
+%% Ploting Figure 1
+figh=figure(1);
+hold on
+grid on       
+%axis([-sum_c sum_c -sum_c sum_c])
+axis([-1250 1250 -1000 1000])
+xlabel('Real')
+ylabel('Imaginary')
+hold on
+for j=5:length(t)-5
+    
+    for k=1:length(c)
+       fig(k)=drawline([real(F(j,k)) imag(F(j,k))],[real(F(j,k+1)) imag(F(j,k+1))],1,'b');
+       
+       hold on
+    end
+    fig1=plot(real(F(j,end)), imag(F(j,end)),'k.');
+    
+      M1(j-4)=getframe(figh,[10 10 530 400]); 
+    
+    
+    
+    %pause(0.001)
+    delete(fig)
+end
+delete(fig1)
+plot(real(F(:,end)), imag(F(:,end)),'k')
+%% Ploting Figure 2
+figure(2)
+plot(t,real(F(:,end)),'k')
+hold on
+plot(t,imag(F(:,end)),'r')
+legend('Real','Imaginary')
+
+
+%% Video Generator
+
+
+MyMovie=VideoWriter('Fourier4');
+MyMovie.FrameRate = 15;
